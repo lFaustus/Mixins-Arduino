@@ -58,7 +58,7 @@ void loop() {
       if(lastIngredientWent == 0)
       {
          stepMultiplier = stepsPerRevolution;
-         looper = 1;
+         looper = 0;
          backstep = false;
       }  
        
@@ -84,7 +84,7 @@ void loop() {
       if(lastIngredientWent == 0)
       {
         stepMultiplier = 2*stepsPerRevolution;
-        looper = 2;
+        looper = 1;
         backstep = false;
       }
       else
@@ -109,7 +109,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-        looper = 3;
+        looper = 2;
         stepMultiplier =3*stepsPerRevolution;
         backstep = false;
       }
@@ -134,7 +134,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-        looper = 4;
+        looper = 3;
         stepMultiplier = 4*stepsPerRevolution;
         backstep = false;
       }
@@ -159,7 +159,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-       looper = 5;
+       looper = 4;
        stepMultiplier = 5*stepsPerRevolution;
        backstep = false;
       }
@@ -184,7 +184,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-       looper = 6;
+       looper = 5;
        stepMultiplier = 6*stepsPerRevolution;
        backstep = false;
       }
@@ -205,7 +205,7 @@ void loop() {
       lastIngredientWent = order[i];
     }
     
-    for(wineloop;wineloop<looper*3;wineloop++)
+    for(wineloop;wineloop<(looper*2)+1;wineloop++)
     {
         /*
          * Step has been reversed since the
@@ -215,18 +215,17 @@ void loop() {
         if(backstep == true)
         {
           
-           myStepper.step(stepsPerRevolution-8);
+           myStepper.step(-stepsPerRevolution+30);
         }
          
         else
         {
-          if(i == 0){
-            myStepper.step(-(stepsPerRevolution/100));
-            Serial.println("entered");
-          }
-          else
-            myStepper.step(-stepsPerRevolution+8);
-        }
+            if(order[i]==1)
+              myStepper.step(stepsPerRevolution-25);
+            else
+              myStepper.step(stepsPerRevolution+25);
+              
+        }  
         Serial.println(wineloop);      
     }
       
