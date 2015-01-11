@@ -38,7 +38,7 @@ int orderSize = sizeof(order)/sizeof(order[6]);
 int stepMultiplier = 0;
 int lastIngredientWent = 0;
 int looper = 0;
-int wineloop = 0;
+//int wineloop = 0;
 boolean backstep = false;
 void setup() {
   // set the speed at 60 rpm:
@@ -60,7 +60,7 @@ void loop() {
       if(lastIngredientWent == 0)
       {
          stepMultiplier = stepsPerRevolution;
-         looper = 0;
+         looper = 1;
          backstep = false;
       }  
        
@@ -86,7 +86,7 @@ void loop() {
       if(lastIngredientWent == 0)
       {
         stepMultiplier = 2*stepsPerRevolution;
-        looper = 1;
+        looper = 2;
         backstep = false;
       }
       else
@@ -111,7 +111,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-        looper = 2;
+        looper = 3;
         stepMultiplier =3*stepsPerRevolution;
         backstep = false;
       }
@@ -136,7 +136,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-        looper = 3;
+        looper = 4;
         stepMultiplier = 4*stepsPerRevolution;
         backstep = false;
       }
@@ -161,7 +161,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-       looper = 4;
+       looper = 5;
        stepMultiplier = 5*stepsPerRevolution;
        backstep = false;
       }
@@ -186,7 +186,7 @@ void loop() {
     {
       if(lastIngredientWent == 0)
       {
-       looper = 5;
+       looper = 6;
        stepMultiplier = 6*stepsPerRevolution;
        backstep = false;
       }
@@ -206,14 +206,60 @@ void loop() {
       }
       lastIngredientWent = order[i];
     }
+    int count = 0,x = 0;
+    Serial.print("NEW loop: ");
+    Serial.println(looper*2);
+    Serial.println();
     
-    for(wineloop;wineloop<(looper*2)+1;wineloop++)
+    while(count < 2 && x < (looper*2))
     {
-        /*
-         * Step has been reversed since the
-         * placement position of motor is 
-         * reversed
-         */     
+      /*if(backstep == true)
+      {
+        myStepper.step(-(490/2));
+      }
+      else
+      {
+        if(order[i] == 1)
+          myStepper.step((490/2)/2);
+        else
+          myStepper.step(490/2);  
+      }*/
+      
+      count++;
+      //wineloop++;
+      if(count == 2)
+      {
+        count == 0;
+        x++;
+      }
+      
+      //Serial.print("NEW count: ");
+       //Serial.println(count);
+       //Serial.println();
+        Serial.print("NEW wineloop: "); 
+       Serial.println(x);
+       Serial.println();
+       /*Serial.print("NEW count: ");
+       Serial.println(count);
+      
+      if(count == 2)
+      {
+      
+        wineloop++;
+        Serial.print("NEW wineloop: "); 
+       Serial.println(wineloop);
+       
+        if(wineloop != looper*2)
+        {
+          count == 0;
+          Serial.println("count is zero");
+        }          
+      }*/
+          
+       
+    }
+    /*for(wineloop;wineloop<(looper*2)+1;wineloop++)
+    {     
         if(backstep == true)
         {
           
@@ -227,19 +273,19 @@ void loop() {
             else
               myStepper.step(stepsPerRevolution+30);
               
-        }  
+        } 
         Serial.println(wineloop);      
-    }
+    }*/
       
-      Serial.print("Last Ingredient Went: ");
+      /*Serial.print("Last Ingredient Went: ");
       Serial.println(lastIngredientWent);
       Serial.print("Backstep State: ");
-      Serial.println(backstep);
-      Serial.print("looper: ");
-      Serial.println(looper);
+      Serial.println(backstep);*/
+      //Serial.print("looper: ");
+      //Serial.println(looper);
       delay(1000);
     looper = 0;  
-    wineloop = 0;
+    //wineloop = 0;
     //End of For Loop
   }
   lastIngredientWent = 0;
@@ -259,6 +305,8 @@ void rotateComputation(boolean bstep,int bottle)
   
   if(looper < 0)
       looper = looper * (-1);
+      //Serial.print("looper: ");
+      //Serial.println(looper);
 }
 
 
