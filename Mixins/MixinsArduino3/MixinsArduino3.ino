@@ -35,9 +35,9 @@ int i=0;
 int order[] = {
   1,4,5,3,2};
 int orderSize = sizeof(order)/sizeof(order[6]);
-int stepMultiplier = 0;
+//int stepMultiplier = 0;
 int lastIngredient = 0;
-int looper = 0;
+//int looper = 0;
 boolean backstep = false;
 void setup() {
   // set the speed at 60 rpm:
@@ -58,8 +58,8 @@ void loop() {
     {
       if(lastIngredient == 0)
       {
-         stepMultiplier = stepsPerRevolution;
-         looper = 1;
+         //stepMultiplier = stepsPerRevolution;
+         //looper = 1;
          backstep = false;
       }  
        
@@ -67,12 +67,12 @@ void loop() {
       {
         if(lastIngredient > bottle_1) //backward rotation
         {
-          rotateComputation(backstep,bottle_1);
+          //rotateComputation(backstep,bottle_1);
           backstep = true;       
         }
         else //forward rotation
         {
-          rotateComputation(backstep,bottle_1);
+          //rotateComputation(backstep,bottle_1);
           backstep = false;
         }
         
@@ -84,21 +84,21 @@ void loop() {
     {
       if(lastIngredient == 0)
       {
-        stepMultiplier = 2*stepsPerRevolution;
-        looper = 2;
+        //stepMultiplier = 2*stepsPerRevolution;
+        //looper = 2;
         backstep = false;
       }
       else
       {
         if(lastIngredient > bottle_2) //backward rotation
         {
-           rotateComputation(backstep,bottle_2);
+           //rotateComputation(backstep,bottle_2);
            backstep = true; 
         }
           
         else //forward rotation
         {
-          rotateComputation(backstep,bottle_2);
+          //rotateComputation(backstep,bottle_2);
           backstep = false;
         }
           
@@ -110,21 +110,21 @@ void loop() {
     {
       if(lastIngredient == 0)
       {
-        looper = 3;
-        stepMultiplier =3*stepsPerRevolution;
+        //looper = 3;
+        //stepMultiplier =3*stepsPerRevolution;
         backstep = false;
       }
       else
       {
         if(lastIngredient > bottle_3) //backward rotation
         {
-           rotateComputation(backstep,bottle_3);           
+           //rotateComputation(backstep,bottle_3);           
            backstep = true; 
         }
           
         else //forward rotation
         {
-          rotateComputation(backstep,bottle_3);
+          //rotateComputation(backstep,bottle_3);
           backstep = false;
         }
       }
@@ -135,21 +135,21 @@ void loop() {
     {
       if(lastIngredient == 0)
       {
-        looper = 4;
-        stepMultiplier = 4*stepsPerRevolution;
+        //looper = 4;
+        //stepMultiplier = 4*stepsPerRevolution;
         backstep = false;
       }
       else
       {
         if(lastIngredient > bottle_4) //backward rotation
         {
-           rotateComputation(backstep,bottle_4);
+           //rotateComputation(backstep,bottle_4);
            backstep = true; 
         }
           
         else //forward rotation
         {
-          rotateComputation(backstep,bottle_4);
+          //rotateComputation(backstep,bottle_4);
           backstep = false;
         }
       }
@@ -160,21 +160,21 @@ void loop() {
     {
       if(lastIngredient == 0)
       {
-       looper = 5;
-       stepMultiplier = 5*stepsPerRevolution;
+       //looper = 5;
+       //stepMultiplier = 5*stepsPerRevolution;
        backstep = false;
       }
       else
       {
         if(lastIngredient > bottle_5) //backward rotation
         {
-           rotateComputation(backstep,bottle_5);
+           //rotateComputation(backstep,bottle_5);
            backstep = true; 
         }
           
         else //forward rotation
         {
-          rotateComputation(backstep,bottle_5);
+          //rotateComputation(backstep,bottle_5);
           backstep = false;
         }
       }
@@ -185,34 +185,34 @@ void loop() {
     {
       if(lastIngredient == 0)
       {
-       looper = 6;
-       stepMultiplier = 6*stepsPerRevolution;
+       //looper = 6;
+       //stepMultiplier = 6*stepsPerRevolution;
        backstep = false;
       }
       else
       {
         if(lastIngredient > bottle_6) //backward rotation
         {
-           rotateComputation(backstep,bottle_6);
+           //rotateComputation(backstep,bottle_6);
            backstep = true; 
         }
           
         else //forward rotation
         {
-          rotateComputation(backstep,bottle_6);
+          //rotateComputation(backstep,bottle_6);
           backstep = false;
         }
       }
       lastIngredient = order[i];
     }
-    int count = 0,wineloop = 0;
+    int count = 0,wineloop = 0,x = rotateComputation(backstep,order[i]);
     Serial.print("NEW loop: ");
-    Serial.println(looper*2);
+    Serial.println(x*2);
     Serial.println();
     
-    while(count < 2 && wineloop < (looper*2))
+    while(count < 2 && wineloop < x*2)
     {
-      if(backstep == true)
+      /*if(backstep == true)
       {
         myStepper.step(-(490/2));
       }
@@ -222,7 +222,7 @@ void loop() {
           myStepper.step((490/2)/2);
         else
           myStepper.step(490/2);  
-      }
+      }*/
       
       count++;
       if(count == 2)
@@ -244,19 +244,22 @@ void loop() {
   
 }
 
-void rotateComputation(boolean bstep,int bottle)
+int rotateComputation(boolean bstep,int bottle)
 {
+  int looper = 0;
+  int stepMultiplier = stepsPerRevolution * bottle;
+  
   if(bstep == true)
-    stepMultiplier = (stepsPerRevolution * (lastIngredient - bottle));
+    looper = (stepsPerRevolution * (lastIngredient - bottle));
   else
-    stepMultiplier = (stepsPerRevolution * (bottle - lastIngredient));
+    looper = (stepsPerRevolution * (bottle - lastIngredient));
     
   looper = stepMultiplier / stepsPerRevolution;
   
   if(looper < 0)
       looper = looper * (-1);
-      //Serial.print("looper: ");
-      //Serial.println(looper);
+      
+  return looper;
 }
 
 
