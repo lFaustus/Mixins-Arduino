@@ -9,7 +9,7 @@ Stepper myStepper(stepsPerRevolution, 8,9,10,11);
 int i=0;
 
 int order[] = {
-  1,4,5,3,2 };
+  5,4,3,2,1};
   
 int orderSize = sizeof(order)/sizeof(order[6]);
 
@@ -35,9 +35,9 @@ void loop() {
   {
     digitalWrite(13,HIGH);
     
-    linearTravelStart(order[i]);
+    linearTravelStart(order[i],i);
     
-    delay(15);
+    
    // End of For Loop
   }
   
@@ -70,34 +70,38 @@ int rotateComputation(int bottle)
   if(looper < 0)
       looper = looper * (-1);
       
-  lastIngredient = bottle;
+  //lastIngredient = bottle;
   
   return looper;
 }
 
-void linearTravelStart(int bottle)
+void linearTravelStart(int bottle,int bottleCursor)
 {
     int count = 0, pos = 0, linearTravel = rotateComputation(bottle);
     Serial.print("\nBACKSTEP? ");
     Serial.println(backstep);
     Serial.println();
     Serial.print("NEW loop: ");
-    Serial.println(linearTravel*2);
+    Serial.println(linearTravel);
 
     
-    while(count < 2 && pos < linearTravel * 2)
+    while(count < 2 && pos < linearTravel)
     {
-      /*if(backstep == true)
+      if(backstep == true)
       {
-        myStepper.step(-(490/2));
+          myStepper.step(-(490/2));
       }
       else
       {
-        if(order[i] == 1)
-          myStepper.step((490/2)/2);
+        if(lastIngredient == 0 && pos == 0)
+        {
+           myStepper.step((490/2)/2);
+           Serial.println("nakasud");
+        }
+         
         else
           myStepper.step(490/2);  
-      }*/
+      }
       
       count++;
       if(count == 2)
@@ -109,6 +113,12 @@ void linearTravelStart(int bottle)
         pos++;
       }
     }
+    lastIngredient = bottle;
+    
+    delay(1000);
+    if(bottleCursor == orderSize - 1)
+       myStepper.step(-(490/2));
+    
 }
 
 
