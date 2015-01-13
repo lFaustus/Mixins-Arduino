@@ -17,6 +17,10 @@ int lastIngredient = 0;
 
 boolean backstep = false;
 
+int incomingByte;
+
+boolean carriage_back_to_origin = false;
+
 void setup() {
   
   // set the speed at 60 rpm:
@@ -31,17 +35,41 @@ void setup() {
 
 void loop() {
 
-  for(i;i<orderSize;i++)
+  /*for(i;i<orderSize;i++)
   {
     digitalWrite(13,HIGH);
     linearTravelStart(order[i],i);
    // End of For Loop
+  }*/
+  if(Serial.available() > 0) // if the data came
+  {
+    incomingByte = Serial.read() - 48; //read single byte from serial buffer
+    digitalWrite(13,HIGH);
+    String tempString = String(incomingByte);
+    if(Constraint(incomingByte,0,6) == true)
+    {
+      tempString.concat(" ingredient");
+      Serial.println(tempString);
+      linearTravelStart(incomingByte);
+    }
+    else
+      ;
   }
+  else
+    carriage_back_to_origin = true;
   
-  // Reset
-  lastIngredient = 0;
-  digitalWrite(13,LOW);
-  
+  if(carriage_back_to_origin == true)
+  {
+    for(int counter = 0; counter <(lastIngredient*2) - 1; counter ++)
+    {
+       myStepper.step(-(490/2));
+    }
+    
+    // Reset
+    back_to_origin = false;
+    lastIngredient = 0;
+    digitalWrite(13,LOW);
+  }
   // End of main
 }
 
@@ -72,7 +100,7 @@ int rotateComputation(int bottle)
   return looper;
 }
 
-void linearTravelStart(int bottle,int bottleCursor)
+void linearTravelStart(int bottle)
 {
     int count = 0, pos = 0, linearTravel = rotateComputation(bottle);
     Serial.print("\nBACKSTEP? ");
@@ -116,17 +144,19 @@ void linearTravelStart(int bottle,int bottleCursor)
     
     // Checks if it is on last bottle 
     // If it is, it returns to starting point
-    if(bottleCursor == orderSize - 1) 
-    {
-       for(int counter = 0; counter <(lastIngredient*2) - 1; counter ++)
-       {
-         myStepper.step(-(490/2));
-       }
-    }
+    //if(bottleCursor == orderSize - 1) 
+   // {
+       
+    //}
 }
 
-
-
+boolean Constraint(int value, int lowerlimit, int upperlimit)
+{
+  if(value > lowerlimit && value < upperlimit)
+    return true;
+    
+    return false;
+}
 
 
 
