@@ -9,7 +9,7 @@ Stepper myStepper(stepsPerRevolution, 8,9,10,11);
 int i=0;
 
 int order[] = {
-  5,4,3,2,1};
+  1,4,5,3,2};
   
 int orderSize = sizeof(order)/sizeof(order[6]);
 
@@ -116,9 +116,16 @@ void linearTravelStart(int bottle,int bottleCursor)
     lastIngredient = bottle;
     
     delay(1000);
-    if(bottleCursor == orderSize - 1)
-       myStepper.step(-(490/2));
     
+    // Checks if it is on last bottle 
+    // If it is, it returns to starting point
+    if(bottleCursor == orderSize - 1) 
+    {
+       for(int counter = 0; counter <(lastIngredient*2) - 1; counter ++)
+       {
+         myStepper.step(-(490/2));
+       }
+    }
 }
 
 
