@@ -3,15 +3,9 @@
 const int stepsPerRevolution = 200;  // change this to fit the number of steps per revolution
 // for your motor
 
+const int steps = 490;
 // initialize the stepper library on pins 8 through 11:
 Stepper myStepper(stepsPerRevolution, 8,9,10,11);            
-
-int i=0;
-
-int order[] = {
-  1,4,5,3,2};
-  
-int orderSize = sizeof(order)/sizeof(order[6]);
 
 int lastIngredient = 0;
 
@@ -20,6 +14,7 @@ boolean backstep = false;
 int incomingByte;
 
 boolean carriage_back_to_origin = false;
+
 
 void setup() {
   
@@ -46,7 +41,7 @@ void loop() {
     incomingByte = Serial.read() - 48; //read single byte from serial buffer
     digitalWrite(13,HIGH);
     String tempString = String(incomingByte);
-    if(Constraint(incomingByte,0,6) == true)
+    if(Constraint(incomingByte,0,7) == true)
     {
       tempString.concat(" ingredient");
       Serial.println(tempString);
@@ -62,11 +57,11 @@ void loop() {
   {
     for(int counter = 0; counter <(lastIngredient*2) - 1; counter ++)
     {
-       myStepper.step(-(490/2));
+       myStepper.step(-(steps/2));
     }
     
     // Reset
-    back_to_origin = false;
+    carriage_back_to_origin = false;
     lastIngredient = 0;
     digitalWrite(13,LOW);
   }
@@ -114,18 +109,18 @@ void linearTravelStart(int bottle)
     {
       if(backstep == true)
       {
-          myStepper.step(-(490/2));
+          myStepper.step(-(steps/2));
       }
       else
       {
         if(lastIngredient == 0 && pos == 0)
         {
-           myStepper.step((490/2)/2);
+           myStepper.step((steps/2)/2);
            Serial.println("nakasud");
         }
          
         else
-          myStepper.step(490/2);  
+          myStepper.step(steps/2);  
       }
       
       count++;
