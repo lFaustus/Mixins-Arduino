@@ -3,7 +3,7 @@
 const int stepsPerRevolution = 200;  // change this to fit the number of steps per revolution
 // for your motor
 
-const int steps = 490;
+const int steps = 503;
 // initialize the stepper library on pins 8 through 11:
 Stepper myStepper(stepsPerRevolution, 8,9,10,11);            
 
@@ -14,6 +14,8 @@ boolean backstep = false;
 int incomingByte;
 
 boolean carriage_back_to_origin = false;
+
+boolean moveServo = false;
 
 
 void setup() {
@@ -41,14 +43,18 @@ void loop() {
     incomingByte = Serial.read() - 48; //read single byte from serial buffer
     digitalWrite(13,HIGH);
     String tempString = String(incomingByte);
-    if(Constraint(incomingByte,0,7) == true)
+    if(Constraint(incomingByte,0,7) == true) // constraint for bottle
     {
       tempString.concat(" ingredient");
       Serial.println(tempString);
       linearTravelStart(incomingByte);
     }
-    else
-      ;
+    else if(Constraint(incomingByte,0,100) == true) // constraint for ml
+    {
+      Serial.println(incomingByte);
+    }
+     
+      //Serial.println(incomingByte);
   }
   else
     carriage_back_to_origin = true;
@@ -57,7 +63,7 @@ void loop() {
   {
     for(int counter = 0; counter <(lastIngredient*2) - 1; counter ++)
     {
-       myStepper.step(-(steps/2));
+       myStepper.step(-((steps/2)/2));
     }
     
     // Reset
@@ -98,11 +104,11 @@ int rotateComputation(int bottle)
 void linearTravelStart(int bottle)
 {
     int count = 0, pos = 0, linearTravel = rotateComputation(bottle);
-    Serial.print("\nBACKSTEP? ");
+   /* Serial.print("\nBACKSTEP? ");
     Serial.println(backstep);
     Serial.println();
     Serial.print("NEW loop: ");
-    Serial.println(linearTravel);
+    Serial.println(linearTravel);*/
 
     
     while(count < 2 && pos < linearTravel)
@@ -110,13 +116,14 @@ void linearTravelStart(int bottle)
       if(backstep == true)
       {
           myStepper.step(-(steps/2));
+          
       }
       else
       {
         if(lastIngredient == 0 && pos == 0)
         {
-           myStepper.step((steps/2)/2);
-           Serial.println("nakasud");
+           myStepper.step(((steps/2)/2)/2);
+          // Serial.println("nakasud");
         }
          
         else
@@ -128,8 +135,8 @@ void linearTravelStart(int bottle)
       {
         count = 0;
        
-        Serial.print("NEW position: "); 
-        Serial.println(pos);
+        //Serial.print("NEW position: "); 
+        //Serial.println(pos);
         pos++;
       }
     }
@@ -152,3 +159,6 @@ boolean Constraint(int value, int lowerlimit, int upperlimit)
     
     return false;
 }
+
+
+
