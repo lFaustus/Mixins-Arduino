@@ -23,7 +23,8 @@ Servo myservo;
 
 const int servoRelayPin = 2;
 const int stepperRelayPin = 3;
-const int stepperEnableDriverPin = 24;
+const int stepperEnableDriverPinA = 24;
+const int stepperEnableDriverPinB = 22;
 
 void setup() {
   myservo.attach(5,1000,2000);
@@ -35,7 +36,9 @@ void setup() {
   Serial.begin(9600);
   
   // initialize pins as OUTPUT
-  pinMode(stepperEnableDriverPin,OUTPUT);
+  //pinMode(stepperEnableDriverPin,OUTPUT);
+  pinMode(stepperEnableDriverPinA,OUTPUT);
+  pinMode(stepperEnableDriverPinB,OUTPUT);
   pinMode(servoRelayPin,OUTPUT);
   pinMode(stepperRelayPin,OUTPUT);
   
@@ -49,7 +52,8 @@ void loop() {
     linearTravelStart(order[i],i);
    // End of For Loop
   }*/
-  digitalWrite(stepperEnableDriverPin,HIGH);
+  digitalWrite(stepperEnableDriverPinA,HIGH);
+  digitalWrite(stepperEnableDriverPinB,HIGH);
   if(Serial.available() > 0) // if the data came
   {
     incomingByte = Serial.read() - 48; //read single byte from serial buffer
@@ -65,14 +69,16 @@ void loop() {
       Serial.println(tempString);
       linearTravelStart(incomingByte);
       digitalWrite(stepperRelayPin,LOW);
-      digitalWrite(stepperEnableDriverPin,LOW);
+      digitalWrite(stepperEnableDriverPinA,LOW);
+      digitalWrite(stepperEnableDriverPinB,LOW);
     }
     else if(Constraint(incomingByte,0,100) == true) // constraint for ml
     {
           //stepperEnable_Disable();//turns off the stepper driver when it is already enabled
          // servoEnable_Disable(); // turns on servo motor
          digitalWrite(stepperRelayPin,LOW);
-         digitalWrite(stepperEnableDriverPin,LOW);
+         digitalWrite(stepperEnableDriverPinA,LOW);
+         digitalWrite(stepperEnableDriverPinB,LOW);
          digitalWrite(servoRelayPin,HIGH);
          Serial.println(incomingByte);
          int push = map(incomingByte,0,100,0,5000);
@@ -93,7 +99,9 @@ void loop() {
   {
     // stepperEnable_Disable();
     digitalWrite(stepperRelayPin,HIGH);
-      digitalWrite(stepperEnableDriverPin,HIGH);
+      //digitalWrite(stepperEnableDriverPin,HIGH);
+    digitalWrite(stepperEnableDriverPinA,HIGH);
+    digitalWrite(stepperEnableDriverPinB,HIGH);
     for(int counter = 0; counter <(lastIngredient*4) - 3; counter ++)
     {
        myStepper.step(-((steps/2)/2));
@@ -104,7 +112,9 @@ void loop() {
     carriage_back_to_origin = false;
     lastIngredient = 0;
     digitalWrite(stepperRelayPin,LOW);
-      digitalWrite(stepperEnableDriverPin,LOW);
+      //digitalWrite(stepperEnableDriverPin,LOW);
+      digitalWrite(stepperEnableDriverPinA,LOW);
+      digitalWrite(stepperEnableDriverPinB,LOW);
       digitalWrite(8,LOW);
       digitalWrite(9,LOW);
       digitalWrite(10,LOW);
@@ -194,7 +204,7 @@ boolean Constraint(int value, int lowerlimit, int upperlimit)
     return false;
 }
 
-void stepperEnable_Disable()
+/*void stepperEnable_Disable()
 {
   int val = digitalRead(stepperRelayPin);
   
@@ -220,7 +230,7 @@ void servoEnable_Disable()
      digitalWrite(servoRelayPin,LOW);
   else
      digitalWrite(servoRelayPin,HIGH);
-}
+}*/
 
 
 
