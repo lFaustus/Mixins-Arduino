@@ -119,7 +119,8 @@ void loop() {
          Serial.println("nakasud");
       }
       else
-        myStepper.step(-((steps/2)+85));
+      //myStepper.step(-((steps/2)+85));
+        myStepper.step(-((steps/2)/2));
        // myStepper.step(-(steps/2));
     }
     

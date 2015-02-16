@@ -1,5 +1,5 @@
 
-#include <Stepper.h>
+#include <StepperFlux.h>
 #include <Servo.h>
 
 const int stepsPerRevolution = 200;  // change this to fit the number of steps per revolution
@@ -7,7 +7,7 @@ const int stepsPerRevolution = 200;  // change this to fit the number of steps p
 
 const int steps = 400;
 // initialize the stepper library on pins 8 through 11:
-Stepper myStepper(stepsPerRevolution, 8,9,10,11);            
+StepperFlux myStepper(stepsPerRevolution, 8,9,10,11);            
 
 int lastIngredient = 0;
 
@@ -30,7 +30,7 @@ void setup() {
   myservo.attach(5,1000,2000);
   myservo.writeMicroseconds(1000);
   // set the speed at 60 rpm:
-  myStepper.setSpeed(200);
+  myStepper.setSpeed(180);
   
   // initialize the serial port:
   Serial.begin(9600);
@@ -53,8 +53,8 @@ void loop() {
     linearTravelStart(order[i],i);
    // End of For Loop
   }*/
-  digitalWrite(stepperEnableDriverPinA,HIGH);
-  digitalWrite(stepperEnableDriverPinB,HIGH);
+  //digitalWrite(stepperEnableDriverPinA,HIGH);
+  //digitalWrite(stepperEnableDriverPinB,HIGH);
   if(Serial.available() > 0) // if the data came
   {
     incomingByte = Serial.read() - 48; //read single byte from serial buffer
@@ -83,7 +83,7 @@ void loop() {
          digitalWrite(servoRelayPin,HIGH);
          Serial.println(incomingByte);
          int push = map(incomingByte,0,100,0,5000);
-          myservo.write(130);
+          myservo.write(82);
           Serial.println(push);
           delay(push);
           myservo.writeMicroseconds(1000);
