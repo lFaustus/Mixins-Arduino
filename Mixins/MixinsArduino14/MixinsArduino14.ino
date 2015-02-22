@@ -90,20 +90,22 @@ void loop() {
            int temp = mlToPush / 25;
            for(int i = 0; i<temp ; i++)
            {
-             int push = map(mlToPush,0,100,0,12500);
-             myservo.write(110);
+             int push = map(25,0,25,0,3500);
+             myservo.write(116);
              Serial.println(push);
              delay(push);
              myservo.writeMicroseconds(1000);
+             mlToPush = mlToPush - 25;
              delay(2000);
            }
-           mlToPush = mlToPush - 25;
+           
          }
          if(mlToPush != 0)
          {
              Serial.println("mlToPush != 0");
-             int push = map(mlToPush,0,100,0,12500);
-             myservo.write(110);
+             Serial.println(mlToPush);
+             int push = map(mlToPush,0,24,0,2400);
+             myservo.write(116);
              Serial.println(push);
              delay(push);
              myservo.writeMicroseconds(1000);
