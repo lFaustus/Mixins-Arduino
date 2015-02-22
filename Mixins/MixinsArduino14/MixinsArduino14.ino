@@ -5,7 +5,7 @@
 const int stepsPerRevolution = 200;  // change this to fit the number of steps per revolution
 // for your motor
 
-const int steps = 503;
+ int steps = 489;
 // initialize the stepper library on pins 8 through 11:
 Stepper myStepper(stepsPerRevolution, 8,9,10,11);            
 
@@ -22,7 +22,7 @@ boolean moveServo = false;
 Servo myservo;
 
 const int servoRelayPin = 2;
-const int stepperRelayPin = 3; 
+const int stepperRelayPin = 3;
 const int stepperEnableDriverPinA = 6;
 const int stepperEnableDriverPinB = 7;
 
@@ -30,7 +30,7 @@ void setup() {
   myservo.attach(5,1000,2000);
   myservo.writeMicroseconds(1000);
   // set the speed at 60 rpm:
-  //myStepper.setSpeed(60);
+  myStepper.setSpeed(200);
   
   // initialize the serial port:
   Serial.begin(9600);
@@ -42,6 +42,7 @@ void setup() {
   pinMode(servoRelayPin,OUTPUT);
   pinMode(stepperRelayPin,OUTPUT);
   digitalWrite(stepperRelayPin,LOW);
+  
 }
 
 void loop() {
@@ -62,32 +63,57 @@ void loop() {
     {
       //digitalWrite(6,HIGH);
       digitalWrite(stepperRelayPin,HIGH);
+      digitalWrite(stepperEnableDriverPinA,HIGH);
+      digitalWrite(stepperEnableDriverPinB,HIGH);
       //digitalWrite(stepperEnableDriverPin,HIGH);
       //stepperEnable_Disable();
       tempString.concat(" ingredient");
       Serial.println(tempString);
       linearTravelStart(incomingByte);
-      //digitalWrite(stepperRelayPin,LOW);
-      //analogWrite(stepperEnableDriverPinA,60);
-      //analogWrite(stepperEnableDriverPinB,60);
+      digitalWrite(stepperRelayPin,LOW);
+      digitalWrite(stepperEnableDriverPinA,LOW);
+      digitalWrite(stepperEnableDriverPinB,LOW);
     }
     else if(Constraint(incomingByte,0,100) == true) // constraint for ml
     {
           //stepperEnable_Disable();//turns off the stepper driver when it is already enabled
          // servoEnable_Disable(); // turns on servo motor
-         
+         digitalWrite(stepperRelayPin,LOW);
+         digitalWrite(stepperEnableDriverPinA,LOW);
+         digitalWrite(stepperEnableDriverPinB,LOW);
          digitalWrite(servoRelayPin,HIGH);
          Serial.println(incomingByte);
-         int push = map(incomingByte,0,100,0,13200);
-          myservo.write(130);
-          Serial.println(push);
-          delay(push);
-          myservo.writeMicroseconds(1000);
-           delay(500);
-          digitalWrite(servoRelayPin,LOW);
+         int mlToPush = incomingByte;
+         if(mlToPush / 25 != 0)
+         {
+           Serial.println(mlToPush);
+           int temp = mlToPush / 25;
+           for(int i = 0; i<temp ; i++)
+           {
+             int push = map(mlToPush,0,100,0,12500);
+             myservo.write(110);
+             Serial.println(push);
+             delay(push);
+             myservo.writeMicroseconds(1000);
+             delay(2000);
+           }
+           mlToPush = mlToPush - 25;
+         }
+         if(mlToPush != 0)
+         {
+             Serial.println("mlToPush != 0");
+             int push = map(mlToPush,0,100,0,12500);
+             myservo.write(110);
+             Serial.println(push);
+             delay(push);
+             myservo.writeMicroseconds(1000);
+             delay(500);
+         }
+         digitalWrite(servoRelayPin,LOW);
           //Serial.println(incomingByte);
          // servoEnable_Disable();//turns off servo motor if it is already enabled
     }
+    
   }
   else
     carriage_back_to_origin = true;
@@ -96,45 +122,28 @@ void loop() {
   {
     // stepperEnable_Disable();
     
+    digitalWrite(stepperRelayPin,HIGH);
       //digitalWrite(stepperEnableDriverPin,HIGH);
-   
+    digitalWrite(stepperEnableDriverPinA,HIGH);
+    digitalWrite(stepperEnableDriverPinB,HIGH);
     for(int counter = 0; counter <(lastIngredient*4) - 3; counter ++)
     {
-      digitalWrite(stepperRelayPin,HIGH);
-      if(counter == 0)
-      {
-         myStepper.setSpeed(150);
-         analogWrite(stepperEnableDriverPinA,150);
-         analogWrite(stepperEnableDriverPinB,150);
-      }
-      else
-      {
-         myStepper.setSpeed(300);
-         analogWrite(stepperEnableDriverPinA,255);
-         analogWrite(stepperEnableDriverPinB,255);
-      }
-      if(lastIngredient == 1)
-      {
-         myStepper.step(-((steps/4)+28));
-         Serial.println("nakasud");
-      }
-      else
-      //myStepper.step(-((steps/2)+85));
-        myStepper.step(-((steps/2)/2));
+      Serial.println((lastIngredient*4) - 3);
+       myStepper.step(-((steps/2)));
        // myStepper.step(-(steps/2));
     }
     
     // Reset
     carriage_back_to_origin = false;
     lastIngredient = 0;
-   
+    
+      
    // stepperEnable_Disable();
   } 
-   delayMicroseconds(2000);
+  digitalWrite(stepperRelayPin,LOW);
       //digitalWrite(stepperEnableDriverPin,LOW);
-      analogWrite(stepperEnableDriverPinA,0);
-      analogWrite(stepperEnableDriverPinB,0);
-      digitalWrite(stepperRelayPin,LOW);
+      digitalWrite(stepperEnableDriverPinA,LOW);
+      digitalWrite(stepperEnableDriverPinB,LOW);
       digitalWrite(8,LOW);
       digitalWrite(9,LOW);
       digitalWrite(10,LOW);
@@ -167,84 +176,48 @@ int rotateComputation(int bottle)
 void linearTravelStart(int bottle)
 {
     int count = 0, pos = 0, linearTravel = rotateComputation(bottle);
+    boolean back = false;
    /* Serial.print("\nBACKSTEP? ");
     Serial.println(backstep);
     Serial.println();
     Serial.print("NEW loop: ");
     Serial.println(linearTravel);*/
+    //Serial.println(backstep);
+   // Serial.println(lastIngredient);
+   
     
-    while(count < 2 && pos < linearTravel)
+    while( count < 2 && pos < linearTravel)
     {
-      
-      /*if(count <1 && pos == 0)
-      {
-          myStepper.setSpeed(120);
-           analogWrite(stepperEnableDriverPinA,120);
-           analogWrite(stepperEnableDriverPinB,120);
-      }
-      else
-      {
-           myStepper.setSpeed(200);
-           analogWrite(stepperEnableDriverPinA,200);
-           analogWrite(stepperEnableDriverPinB,200);
-      }*/
-      
       if(backstep == true)
       {
-          if((count == 0 && pos == 0) || (count ==1 && pos == linearTravel -1)){
-            myStepper.setSpeed(150);
-           analogWrite(stepperEnableDriverPinA,150);
-           analogWrite(stepperEnableDriverPinB,150);
-           myStepper.step(-(steps/2));
+          //myStepper.step(-(steps/2));
+          if(back == true){
+            steps = steps + 1;
+            back = false;
           }
-          else
-          {
-            myStepper.setSpeed(200);
-           analogWrite(stepperEnableDriverPinA,255);
-           analogWrite(stepperEnableDriverPinB,255);
-           myStepper.step(-((steps/2)-3));
-          } 
           
+          myStepper.step(-(steps/2));
           
       }
       else
       {
         if(lastIngredient == 0 && pos == 0)
         {
+          steps = steps + 1;
+           myStepper.step((steps/2)/2);
           
-            //if(count == 0){
-              myStepper.setSpeed(150);
-             analogWrite(stepperEnableDriverPinA,150);
-             analogWrite(stepperEnableDriverPinB,150);
-           // }
-           // else
-           // {
-            //  myStepper.setSpeed(200);
-            // analogWrite(stepperEnableDriverPinA,255);
-            //}
-              myStepper.step(steps/6);
-          
-           
-           
         }
          
-        else  
-       {
-         if((count == 0 && pos == 0) || (count ==1 && pos == linearTravel -1)){
-            myStepper.setSpeed(150);
-           analogWrite(stepperEnableDriverPinA,150);
-           analogWrite(stepperEnableDriverPinB,150);
-           myStepper.step((steps/2));
-          }
-          else
-          {
-           myStepper.setSpeed(200);
-           analogWrite(stepperEnableDriverPinA,255);
-           analogWrite(stepperEnableDriverPinB,255);
-            myStepper.step((steps/2)-1);
+        else 
+        {
+          if(back == false){
+            steps = steps - 1;  
+            back = true;
           }
           
-       }
+          myStepper.step(steps/2);
+        }
+           //Serial.println("nakasud");
       }
       
       count++;
@@ -256,15 +229,12 @@ void linearTravelStart(int bottle)
         //Serial.println(pos);
         pos++;
       }
+      
     }
+   
     lastIngredient = bottle;
+   // backstep = false;
     
-    linearTravel = 0;
-    delayMicroseconds(2000);
-    analogWrite(stepperEnableDriverPinA,0);
-    analogWrite(stepperEnableDriverPinB,0);
-    digitalWrite(stepperRelayPin,LOW);
-
     
     // Checks if it is on last bottle 
     // If it is, it returns to starting point
@@ -309,6 +279,9 @@ void servoEnable_Disable()
   else
      digitalWrite(servoRelayPin,HIGH);
 }*/
+
+
+
 
 
 
