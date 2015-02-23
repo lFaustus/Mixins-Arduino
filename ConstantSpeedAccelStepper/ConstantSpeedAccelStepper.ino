@@ -34,7 +34,7 @@ void loop()
    stepper.moveTo(500);
   while (stepper.currentPosition() != 300) // Full speed up to 300
     stepper.run();
- // stepper.stop(); // Stop as fast as possible: sets new target
+  stepper.stop(); // Stop as fast as possible: sets new target
   stepper.runToPosition(); 
   // Now stopped after quickstop
 
@@ -43,7 +43,7 @@ void loop()
   while (stepper.currentPosition() != 0) // Full speed basck to 0
     stepper.run();
   stepper.stop(); // Stop as fast as possible: sets new target
-  stepper.runToPosition(); 
+  //stepper.runToPosition(); 
   // Now stopped after quickstop(
   /*stepper.moveTo(500);
   while (stepper.currentPosition() != 300) // Full speed up to 300
