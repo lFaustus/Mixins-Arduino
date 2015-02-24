@@ -96,9 +96,10 @@ void loop() {
       digitalWrite(stepperRelayPin,LOW);
       digitalWrite(stepperEnableDriverPinA,LOW);
       digitalWrite(stepperEnableDriverPinB,LOW);
+      moveServo = true;
     }
     
-    else if(Constraint(incomingByte,0,100) == true) // constraint for ml
+    else if(Constraint(incomingByte,0,101) == true && moveServo == true) // constraint for ml
     {
          digitalWrite(stepperRelayPin,LOW);
          digitalWrite(stepperEnableDriverPinA,LOW);
@@ -106,29 +107,66 @@ void loop() {
          digitalWrite(servoRelayPin,HIGH);
          Serial.println(incomingByte);
          int mlToPush = incomingByte;
-         if(mlToPush / 25 != 0)
+         if(mlToPush/2 !=0 && (lastIngredient >=1 && lastIngredient <=4))
          {
            int temp = mlToPush / 25;
            for(int i = 0; i<temp ; i++)
            {
-             int push = map(25,0,25,0,3500);
+             
+             int push = map(25,0,25,0,1680);
              myservo.write(116);
              delay(push);
              myservo.writeMicroseconds(1000);
              mlToPush = mlToPush - 25;
-             delay(2000);
+             delay(push);
+             Serial.println("nakasud");
            }
            
          }
-         if(mlToPush != 0)
+         if(mlToPush != 0 && (lastIngredient >=1 && lastIngredient <=4))
          {
-             int push = map(mlToPush,0,24,0,2400);
+             int push = map(mlToPush,0,24,0,1605);
              myservo.write(116);
              delay(push);
              myservo.writeMicroseconds(1000);
-             delay(500);
+             delay(push);
+             Serial.println("nakasud2");
          }
+         
+         if(mlToPush/25  != 0 && (lastIngredient >= 5 && lastIngredient <=6))
+           {
+             /*int push2 = map(25,0,25,0,3500);
+             myservo.write(116);
+             delay(push2);
+             myservo.writeMicroseconds(1000);
+             mlToPush = mlToPush - 25;
+             delay(push2);*/
+             int temp = mlToPush / 25;
+             for(int i = 0; i<temp ; i++)
+             {
+             
+             int push = map(25,0,25,0,2450);
+             myservo.write(116);
+             delay(push);
+             myservo.writeMicroseconds(1000);
+             mlToPush = mlToPush - 25;
+             delay(push);
+             Serial.println("nakasud3");
+             }
+           }
+           
+          if(mlToPush  != 0 && (lastIngredient >= 5 && lastIngredient <=6))
+         {
+             int push = map(mlToPush,0,24,0,2300);
+             myservo.write(116);
+             delay(push);
+             myservo.writeMicroseconds(1000);
+             delay(push);
+             Serial.println("nakasud4");
+         }
+           
          digitalWrite(servoRelayPin,LOW);
+         moveServo = false;
     }
     
   }
@@ -142,7 +180,7 @@ void loop() {
     //Serial.println("SERIAL EMPTY");
     //Serial.print("CURRENT POS : ");
       //Serial.println(stepperCurrentPosition - (500 * 4));
-      myStepper.runToNewPosition(20);
+      myStepper.runToNewPosition(50);
       myStepper.stop();
       
    /* for(int counter = 0; counter <(lastIngredient*4) - 3; counter ++)
