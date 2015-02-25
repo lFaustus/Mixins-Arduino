@@ -45,49 +45,49 @@ void loop() {
     incomingByte = Serial.read() - 48; //read single byte from serial buffer
     
     String tempString = String(incomingByte);
-    if(Constraint(incomingByte,0,7) == true) // constraint for bottle
+    if(Constraint(incomingByte,0,7) == true && moveServo == false) // constraint for bottle
     {
       digitalWrite(stepperRelayPin,HIGH);
       digitalWrite(stepperEnableDriverPinA,HIGH);
       digitalWrite(stepperEnableDriverPinB,HIGH);
       tempString.concat(" ingredient");
-      Serial.println(tempString);
+      /*Serial.println(tempString);
       Serial.print("Current Position");
-      Serial.println(myStepper.currentPosition());
+      Serial.println(myStepper.currentPosition());*/
       
        switch(incomingByte)
        {
          case 1:
             //myStepper.runToNewPosition(myStepper.currentPosition() + ((incomingByte - lastIngredient) * 150));
-            myStepper.runToNewPosition(200);
-            Serial.println("ENTERED");
+            myStepper.runToNewPosition(180);
+            //Serial.println("ENTERED");
            break;
          
          case 2:
             //myStepper.runToNewPosition(myStepper.currentPosition() + ((incomingByte - lastIngredient) * 498));
             //myStepper.runToNewPosition(myStepper.currentPosition() + (incomingByte - lastIngredient) * 340);    
-            myStepper.runToNewPosition(incomingByte * 355);  
+            myStepper.runToNewPosition(incomingByte * 328);  
             
            break;
            
          case 3:
             //myStepper.runToNewPosition(myStepper.currentPosition() + ((incomingByte - lastIngredient) * 405));
-            myStepper.runToNewPosition(incomingByte * 405);     
+            myStepper.runToNewPosition(incomingByte * 385);     
             
            break;
            
          case 4:
               //myStepper.runToNewPosition(myStepper.currentPosition() + ((incomingByte - lastIngredient) * 428));
-              myStepper.runToNewPosition(incomingByte * 428);          
+              myStepper.runToNewPosition(incomingByte * 415);          
            break;
          
          case 5:
              //myStepper.runToNewPosition(myStepper.currentPosition() + ((incomingByte - lastIngredient) * 440));
-             myStepper.runToNewPosition(incomingByte * 440);
+             myStepper.runToNewPosition(incomingByte * 425);
            break;
            
          case 6:
-            myStepper.runToNewPosition(incomingByte * 450);
+            myStepper.runToNewPosition(incomingByte * 440);
            break;
        }
        
@@ -105,7 +105,7 @@ void loop() {
          digitalWrite(stepperEnableDriverPinA,LOW);
          digitalWrite(stepperEnableDriverPinB,LOW);
          digitalWrite(servoRelayPin,HIGH);
-         Serial.println(incomingByte);
+         //Serial.println(incomingByte);
          int mlToPush = incomingByte;
          if(mlToPush/50 !=0 && (lastIngredient >=1 && lastIngredient <=4))
          {
@@ -113,22 +113,22 @@ void loop() {
            for(int i = 0; i<temp ; i++)
            {
              
-             int push = map(50,0,50,0,3100);
-             myservo.write(116);
+             int push = map(50,0,50,0,3450);
+             myservo.write(170);
              delay(push);
              myservo.writeMicroseconds(1000);
              mlToPush = mlToPush - 50;
-             delay(push);
-             Serial.println("nakasud");
+             delay(push+200);
+             //Serial.println("nakasud");
            }
            
          }
          if(mlToPush != 0 && (lastIngredient >=1 && lastIngredient <=4))
          {
-           Serial.println("nakasud2");
-             int push = map(mlToPush,0,50,0,3100);
-             Serial.println(push);
-             myservo.write(116);
+           //Serial.println("nakasud2");
+             int push = map(mlToPush,0,49,0,3850);
+             //Serial.println(push);
+             myservo.write(170);
              delay(push);
              myservo.writeMicroseconds(1000);
              delay(push);
@@ -148,23 +148,24 @@ void loop() {
              {
              
              int push = map(25,0,25,0,2450);
-             myservo.write(116);
+             myservo.write(170);
              delay(push);
              myservo.writeMicroseconds(1000);
              mlToPush = mlToPush - 25;
              delay(push);
-             Serial.println("nakasud3");
              }
            }
            
           if(mlToPush  != 0 && (lastIngredient >= 5 && lastIngredient <=6))
          {
-             int push = map(mlToPush,0,24,0,2300);
-             myservo.write(116);
+             int push = map(mlToPush,0,24,0,2600);
+             Serial.println(mlToPush);
+             Serial.println(push);
+             myservo.write(170);
              delay(push);
              myservo.writeMicroseconds(1000);
              delay(push);
-             Serial.println("nakasud4");
+             //Serial.println("nakasud4");
          }
            
          digitalWrite(servoRelayPin,LOW);
@@ -178,11 +179,12 @@ void loop() {
       //digitalWrite(stepperEnableDriverPin,LOW);
     digitalWrite(stepperEnableDriverPinA,HIGH);
     digitalWrite(stepperEnableDriverPinB,HIGH);
-   
+       Serial.write("1");
+       Serial.flush();
     //Serial.println("SERIAL EMPTY");
     //Serial.print("CURRENT POS : ");
       //Serial.println(stepperCurrentPosition - (500 * 4));
-      myStepper.runToNewPosition(50);
+      myStepper.runToNewPosition(12);
       myStepper.stop();
       
    /* for(int counter = 0; counter <(lastIngredient*4) - 3; counter ++)
@@ -208,6 +210,7 @@ void loop() {
     digitalWrite(9,LOW);
     digitalWrite(10,LOW);
     digitalWrite(11,LOW);
+
   }
     /*int counter = 0, tempPos = 0,backtobase = lastIngredient - incomingByte;
     backtobase = backtobase < 0 ? backtobase * (-1) : backtobase;
@@ -234,102 +237,6 @@ void loop() {
   // End of main
 }
 
-int rotateComputation(int bottle)
-{
-  int looper = 0;
-
-  if(lastIngredient == 0)
-    looper = bottle;
-    
-  else
-  {
-     if(backstep == true)
-        looper = lastIngredient - bottle;
-     else
-        looper = bottle - lastIngredient;
-  } 
-  
-  backstep = lastIngredient > bottle ? true : false;
-  
-  looper = looper < 0 ? looper * (-1) : looper;
-  //Serial.println(looper);
-  return looper;
-}
-
-/*void linearTravelStart(int bottle)
-{
-    int count = 0, pos = 0, linearTravel = rotateComputation(bottle);
-    boolean back = false;
-   /* Serial.print("\nBACKSTEP? ");
-    Serial.println(backstep);
-    Serial.println();
-    Serial.print("NEW loop: ");
-    Serial.println(linearTravel);
-    //Serial.println(backstep);
-   // Serial.println(lastIngredient);
-   
-    
-    while( count < 2 && pos < linearTravel)
-    {
-      if(backstep == true)
-      {
-          //myStepper.step(-(steps/2));
-          //if(back == true){
-            steps = steps + 1;
-            //back = false;
-          //}
-          
-          myStepper.step(-(steps/2));
-          
-      }
-      else
-      {
-        if(lastIngredient == 0 && pos == 0)
-        {
-          //steps = steps + 1;
-          //if(bottle == 0)
-           myStepper.step((steps/2)/2);
-          //else
-           //myStepper.step(((steps/2)/2) - 2);
-        }
-         
-        else 
-        {
-         // if(back == false){
-            // steps = steps + 1;  
-            //back = true;
-          //}
-          
-          myStepper.step(steps/2);
-        }
-           //Serial.println("nakasud");
-      }
-      
-      count++;
-      if(count == 2)
-      {
-        count = 0;
-       
-        //Serial.print("NEW position: "); 
-        //Serial.println(pos);
-        pos++;
-      }
-      delayMicroseconds(200);
-      
-    }
-   
-    lastIngredient = bottle;
-   // backstep = false;
-    
-    
-    // Checks if it is on last bottle 
-    // If it is, it returns to starting point
-    //if(bottleCursor == orderSize - 1) 
-   // {
-       
-    //}
-}*/
-
 boolean Constraint(int value, int lowerlimit, int upperlimit)
 {
   if(value > lowerlimit && value < upperlimit)
@@ -337,34 +244,6 @@ boolean Constraint(int value, int lowerlimit, int upperlimit)
     
     return false;
 }
-
-/*void stepperEnable_Disable()
-{
-  int val = digitalRead(stepperRelayPin);
-  
-  if(val == HIGH)
-  {
-    digitalWrite(stepperRelayPin,LOW);
-    digitalWrite(stepperEnableDriverPin,LOW);
-    
-  }
-  else
-  {
-      digitalWrite(stepperRelayPin,HIGH);
-      digitalWrite(stepperEnableDriverPin,HIGH);
-  }
-   
-}
-
-void servoEnable_Disable()
-{
-  int valServo = digitalRead(servoRelayPin);
-  
-  if(valServo == HIGH)
-     digitalWrite(servoRelayPin,LOW);
-  else
-     digitalWrite(servoRelayPin,HIGH);
-}*/
 
 
 
