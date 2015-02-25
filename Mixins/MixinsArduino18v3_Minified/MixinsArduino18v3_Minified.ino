@@ -6,8 +6,6 @@ AccelStepper myStepper(AccelStepper::FULL4WIRE,8,9,10,11,true);
 
 int lastIngredient = 0;
 
-boolean backstep = false;
-
 int incomingByte;
 
 boolean moveServo = false;
@@ -42,7 +40,7 @@ void loop() {
 
   if(Serial.available() > 0) // if the data came
   {
-    incomingByte = Serial.read() - 48; //read single byte from serial buffer
+    incomingByte = Serial.parseInt(); //read single byte from serial buffer
     
     String tempString = String(incomingByte);
     if(Constraint(incomingByte,0,7) == true && moveServo == false) // constraint for bottle
@@ -51,8 +49,8 @@ void loop() {
       digitalWrite(stepperEnableDriverPinA,HIGH);
       digitalWrite(stepperEnableDriverPinB,HIGH);
       tempString.concat(" ingredient");
-      /*Serial.println(tempString);
-      Serial.print("Current Position");
+      //Serial.println(tempString);
+      /*Serial.print("Current Position");
       Serial.println(myStepper.currentPosition());*/
       
        switch(incomingByte)
@@ -99,7 +97,7 @@ void loop() {
       moveServo = true;
     }
     
-    else if(Constraint(incomingByte,0,101) == true && moveServo == true) // constraint for ml
+    else if(Constraint(incomingByte,0,181) == true && moveServo == true) // constraint for ml
     {
          digitalWrite(stepperRelayPin,LOW);
          digitalWrite(stepperEnableDriverPinA,LOW);
@@ -159,8 +157,8 @@ void loop() {
           if(mlToPush  != 0 && (lastIngredient >= 5 && lastIngredient <=6))
          {
              int push = map(mlToPush,0,24,0,2600);
-             Serial.println(mlToPush);
-             Serial.println(push);
+             //Serial.println(mlToPush);
+             //Serial.println(push);
              myservo.write(170);
              delay(push);
              myservo.writeMicroseconds(1000);
@@ -179,8 +177,7 @@ void loop() {
       //digitalWrite(stepperEnableDriverPin,LOW);
     digitalWrite(stepperEnableDriverPinA,HIGH);
     digitalWrite(stepperEnableDriverPinB,HIGH);
-       Serial.write("1");
-       Serial.flush();
+       Serial.write("done");
     //Serial.println("SERIAL EMPTY");
     //Serial.print("CURRENT POS : ");
       //Serial.println(stepperCurrentPosition - (500 * 4));
