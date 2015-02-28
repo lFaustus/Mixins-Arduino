@@ -1,4 +1,3 @@
-
 #include <AccelStepper.h>
 #include <Servo.h>
 
@@ -113,7 +112,7 @@ void loop() {
            {
              
              int push = map(50,0,50,0,3810);
-             myservo.write(120);
+             myservo.write(180);
              delay(push);
              myservo.write(0);
              mlToPush = mlToPush - 50;
@@ -127,7 +126,7 @@ void loop() {
            //Serial.println("nakasud2");
              int push = map(mlToPush,0,49,0,4150);
              //Serial.println(push);
-             myservo.write(120);
+             myservo.write(180);
              delay(push);
              myservo.write(0);
              delay(push);
@@ -147,7 +146,7 @@ void loop() {
              {
              
              int push = map(25,0,25,0,2750);
-             myservo.write(125);
+             myservo.write(180);
              delay(push);
              myservo.write(0);
              mlToPush = mlToPush - 25;
@@ -160,7 +159,7 @@ void loop() {
              int push = map(mlToPush,0,24,0,3200);
              //Serial.println(mlToPush);
              //Serial.println(push);
-               myservo.write(125);
+               myservo.write(180);
              delay(push);
              myservo.write(0);
              delay(push);
